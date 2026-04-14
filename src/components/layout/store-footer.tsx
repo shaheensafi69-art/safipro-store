@@ -1,126 +1,127 @@
-import Link from "next/link"
+import Link from "next/link";
 
 export default function StoreFooter() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="relative mt-20 overflow-hidden border-t border-white/10 bg-black">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.10),transparent_22%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.05),transparent_18%),linear-gradient(180deg,#050505_0%,#000000_100%)]" />
-      <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(2px_2px_at_20px_30px,rgba(255,255,255,0.95),transparent),radial-gradient(1.5px_1.5px_at_120px_80px,rgba(255,255,255,0.75),transparent),radial-gradient(1.8px_1.8px_at_220px_160px,rgba(255,255,255,0.85),transparent),radial-gradient(1.2px_1.2px_at_320px_40px,rgba(255,255,255,0.75),transparent),radial-gradient(2px_2px_at_420px_220px,rgba(212,175,55,0.55),transparent),radial-gradient(1.5px_1.5px_at_540px_110px,rgba(255,255,255,0.70),transparent),radial-gradient(1.8px_1.8px_at_680px_260px,rgba(212,175,55,0.35),transparent)]" />
-
-      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.9fr_0.9fr]">
-          {/* SHAHEEN BOX */}
-          <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
-
-            <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-              <div className="relative shrink-0">
-                <div className="absolute inset-0 rounded-full bg-[#D4AF37]/20 blur-xl" />
-                <img
-                  src="/shaheen.jpeg"
-                  alt="Shaheen Safi"
-                  className="relative h-24 w-24 rounded-full border-2 border-[#D4AF37]/40 object-cover shadow-[0_0_28px_rgba(212,175,55,0.18)]"
-                />
-              </div>
-
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-                  Founder Spotlight
-                </div>
-                <h3 className="mt-2 text-2xl font-bold text-white">
-                  Shaheen Safi
-                </h3>
-                <p className="mt-3 max-w-xl text-sm leading-7 text-gray-300">
-                  Shaheen Safi is the driving force behind SafiPro, combining
-                  strong vision, digital business thinking, technical knowledge,
-                  design awareness, and a deep passion for building modern
-                  brands with international standards. His focus is not only on
-                  creating a store, but on shaping a complete premium identity
-                  that feels powerful, trusted, and future-ready.
-                </p>
-              </div>
+    <footer className="relative mt-20 border-t border-white/5 bg-[#050505] pt-24 pb-12 text-white overflow-hidden font-sans">
+      {/* Subtle Glow Effect */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/5 blur-[120px] pointer-events-none" />
+      
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-12">
+          
+          {/* BRAND & VISION */}
+          <div className="lg:col-span-5">
+            <div className="mb-8">
+              <h2 className="text-4xl font-light tracking-tighter uppercase">
+                Safi<span className="font-bold text-[#D4AF37]">Pro</span>
+              </h2>
+              <div className="mt-2 h-[1px] w-12 bg-[#D4AF37]" />
+              <p className="mt-4 text-[10px] tracking-[0.4em] uppercase text-gray-500">
+                Premium Fashion Experience
+              </p>
             </div>
-          </div>
 
-          {/* BRAND */}
-          <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-              SafiPro
-            </div>
-            <h3 className="mt-3 text-2xl font-bold text-white">
-              Premium Fashion Experience
-            </h3>
-            <p className="mt-4 text-sm leading-7 text-gray-400">
-              SafiPro is built around luxury presentation, secure checkout, and
-              a bold black-and-gold identity designed for customers who value
-              style, quality, and strong brand energy.
+            <p className="max-w-md text-sm leading-8 text-gray-400 font-light">
+              Crafting a legacy of excellence. SafiPro represents the intersection 
+              of modern digital innovation and timeless luxury aesthetics, 
+              delivering premium quality to a global audience.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <span className="rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-2 text-xs font-medium text-[#E6C766]">
-                Luxury Design
-              </span>
-              <span className="rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-2 text-xs font-medium text-[#E6C766]">
-                Secure Checkout
-              </span>
-              <span className="rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-2 text-xs font-medium text-[#E6C766]">
-                Premium Storefront
-              </span>
+            <div className="mt-10 flex items-center gap-4">
+              <img
+                src="/shaheen.jpeg"
+                alt="Shaheen Safi"
+                className="h-12 w-12 rounded-full border border-white/10 grayscale hover:grayscale-0 transition-all duration-700"
+              />
+              <div className="border-l border-white/10 pl-4">
+                <p className="text-xs font-bold tracking-widest uppercase">Shaheen Safi</p>
+                <p className="text-[10px] text-[#D4AF37] uppercase tracking-widest mt-0.5">Founder & CEO</p>
+              </div>
             </div>
           </div>
 
-          {/* LINKS */}
-          <div className="rounded-[30px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-              Navigation
-            </div>
+          {/* NAVIGATION */}
+          <div className="lg:col-span-3">
+            <h4 className="mb-8 text-[11px] font-bold uppercase tracking-[0.3em] text-gray-600">Explore</h4>
+            <ul className="space-y-4 text-[13px] tracking-wide">
+              {['Home', 'Shop', 'About', 'Cart', 'Checkout'].map((item) => (
+                <li key={item}>
+                  <Link 
+                    href={`/${item.toLowerCase()}`} 
+                    className="text-gray-400 hover:text-[#D4AF37] transition-colors duration-300 flex items-center gap-2 group"
+                  >
+                    <span className="h-px w-0 bg-[#D4AF37] transition-all duration-300 group-hover:w-3" />
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-            <div className="mt-5 flex flex-col gap-3 text-sm">
-              <Link
-                href="/"
-                className="rounded-2xl border border-transparent px-3 py-2 text-gray-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
+          {/* SOCIAL & CONNECT */}
+          <div className="lg:col-span-4">
+            <h4 className="mb-8 text-[11px] font-bold uppercase tracking-[0.3em] text-gray-600">Identity</h4>
+            <div className="space-y-4">
+              {/* Facebook Button */}
+              <a 
+                href="https://www.facebook.com/profile.php?id=61568189925436" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between border border-white/5 bg-white/[0.02] px-6 py-4 transition-all duration-500 hover:bg-[#D4AF37] hover:text-black"
               >
-                Home
-              </Link>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em]">Facebook</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 group-hover:opacity-100 transition-opacity">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+              </a>
 
-              <Link
-                href="/shop"
-                className="rounded-2xl border border-transparent px-3 py-2 text-gray-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
+              {/* LinkedIn Button */}
+              <a 
+                href="https://www.linkedin.com/company/112523933" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between border border-white/5 bg-white/[0.02] px-6 py-4 transition-all duration-500 hover:bg-[#D4AF37] hover:text-black"
               >
-                Shop
-              </Link>
-
-              <Link
-                href="/about"
-                className="rounded-2xl border border-transparent px-3 py-2 text-gray-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
-              >
-                About
-              </Link>
-
-              <Link
-                href="/cart"
-                className="rounded-2xl border border-transparent px-3 py-2 text-gray-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
-              >
-                Cart
-              </Link>
-
-              <Link
-                href="/checkout"
-                className="rounded-2xl border border-transparent px-3 py-2 text-gray-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
-              >
-                Checkout
-              </Link>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em]">LinkedIn</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 group-hover:opacity-100 transition-opacity">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                  <rect x="2" y="9" width="4" height="12"></rect>
+                  <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+              </a>
+              
+              <div className="pt-4">
+                <p className="text-[10px] uppercase tracking-widest text-gray-600 mb-1">HQ London</p>
+                <p className="text-[12px] text-gray-500 italic">71-75 Shelton Street, Covent Garden</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-gray-500 md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} SafiPro. All rights reserved.</p>
-          <p className="text-gray-600">
-            Designed with a luxury identity for a modern premium storefront
-          </p>
+        {/* BOTTOM SECTION */}
+        <div className="mt-24 border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <p className="text-[10px] tracking-[0.2em] text-gray-600 uppercase">
+              © {currentYear} SAFIPRO LTD
+            </p>
+            <p className="text-[9px] tracking-[0.1em] text-gray-700 uppercase border border-white/5 px-2 py-1">
+              Company No: 17063286
+            </p>
+          </div>
+          
+          <div className="flex gap-8 text-[10px] tracking-[0.2em] text-gray-600 uppercase">
+            <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="#" className="hover:text-white transition-colors">Terms</Link>
+          </div>
         </div>
       </div>
+
+      {/* Background Graphic */}
+      <div className="absolute -bottom-16 -right-10 pointer-events-none select-none opacity-[0.02] text-[18rem] font-black tracking-tighter">
+        SAFI
+      </div>
     </footer>
-  )
+  );
 }
