@@ -3,6 +3,9 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { getStripe } from "@/lib/payments/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { sendOrderEmail } from "@/lib/notifications/email"
+import { sendToPrintify } from "@/lib/printify/order"
+import { sendTelegramMessage } from "@/lib/notifications/telegram"
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -39,15 +42,48 @@ export async function POST(req: Request) {
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session
+
       const orderId = session.metadata?.order_id || session.client_reference_id
+      const customerEmail = session.customer_email || ""
+      const orderNumber = session.metadata?.order_number || "N/A"
 
       if (orderId) {
+        // 🔥 گرفتن سفارش کامل
+        const { data: order } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("id", orderId)
+          .single()
+
+        // 🔥 update status
         await supabase
           .from("orders")
-          .update({
-            payment_status: "paid",
-          })
+          .update({ payment_status: "paid" })
           .eq("id", orderId)
+
+        // 🔥 ارسال به Printify
+        try {
+          await sendToPrintify(order)
+        } catch (e) {
+          console.error("Printify failed:", e)
+        }
+
+        // 🔥 ایمیل
+        await sendOrderEmail({
+          orderNumber,
+          customerEmail,
+        })
+
+        // 🔥 تلگرام
+        await sendTelegramMessage(`
+🛒 <b>New Order Paid</b>
+
+Order: ${orderNumber}
+Email: ${customerEmail}
+
+💰 Status: PAID
+📦 Sent to Printify
+`)
       }
     }
 
