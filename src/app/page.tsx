@@ -5,13 +5,11 @@ type Product = {
   id: string
   title: string
   slug: string
-  short_description: string | null
 }
 
 type ProductImage = {
   image_url: string
   is_primary: boolean
-  sort_order?: number
 }
 
 type ProductVariant = {
@@ -25,25 +23,18 @@ type ProductRow = Product & {
   product_variants: ProductVariant[]
 }
 
-function formatPrice(price: number | null, currency: string) {
-  if (price === null) return "Price unavailable"
-  return `${price.toFixed(2)} ${currency}`
-}
-
 export default async function HomePage() {
   const supabase = createAdminClient()
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("products")
     .select(`
       id,
       title,
       slug,
-      short_description,
       product_images (
         image_url,
-        is_primary,
-        sort_order
+        is_primary
       ),
       product_variants (
         selling_price,
@@ -53,291 +44,314 @@ export default async function HomePage() {
     `)
     .eq("status", "active")
     .eq("visible", true)
-    .order("created_at", { ascending: false })
-    .limit(8)
+    .limit(6)
 
   const products = (data || []) as ProductRow[]
 
   return (
-    <main className="bg-black text-white">
+    <main className="relative overflow-hidden bg-black text-white">
+      {/* Galaxy Background */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-black" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(212,175,55,0.12),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(255,255,255,0.06),transparent_18%),radial-gradient(circle_at_50%_80%,rgba(212,175,55,0.08),transparent_22%)]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-40 bg-[radial-gradient(2px_2px_at_20px_30px,rgba(255,255,255,0.9),transparent),radial-gradient(1.5px_1.5px_at_140px_90px,rgba(255,255,255,0.75),transparent),radial-gradient(2px_2px_at_260px_160px,rgba(212,175,55,0.55),transparent),radial-gradient(1.5px_1.5px_at_400px_60px,rgba(255,255,255,0.7),transparent),radial-gradient(2px_2px_at_520px_240px,rgba(212,175,55,0.35),transparent),radial-gradient(1.5px_1.5px_at_680px_120px,rgba(255,255,255,0.8),transparent)]" />
+
       {/* HERO */}
-      <section className="relative min-h-[88vh] overflow-hidden">
+      <section className="relative flex h-[82vh] min-h-[620px] items-end overflow-hidden sm:h-[90vh]">
         <img
           src="/hero.jpeg"
           alt="SafiPro Hero"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center sm:object-center"
         />
 
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.18),transparent_38%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/45 to-black" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_55%)]" />
 
-        <div className="relative z-10 mx-auto flex min-h-[88vh] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="inline-flex rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#E6C766]">
-              SafiPro Luxury Collection
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 sm:pb-14 lg:px-8 lg:pb-16">
+          <div className="max-w-2xl rounded-[28px] border border-white/10 bg-black/25 p-5 backdrop-blur-md sm:p-7">
+            <div className="inline-flex rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#E6C766]">
+              Luxury Streetwear
             </div>
 
-            <h1 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl lg:text-7xl">
-              Premium Fashion With a
-              <span className="block text-[#D4AF37]">Bold Luxury Identity</span>
+            <h1 className="mt-5 text-4xl font-bold tracking-[0.18em] text-[#D4AF37] sm:text-5xl lg:text-6xl">
+              SAFIPRO
             </h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-gray-300 sm:text-base">
-              SafiPro brings modern premium style, powerful design language, and
-              a refined black and gold storefront experience for customers who
-              want more than ordinary fashion.
+            <p className="mt-4 max-w-xl text-sm leading-7 text-gray-300 sm:text-base">
+              Built for leaders who refuse average. Power, vision and identity
+              shaped into premium design.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/shop"
-                className="rounded-2xl bg-[#D4AF37] px-6 py-3 font-semibold text-black transition hover:bg-[#E6C766]"
+                className="rounded-full bg-[#D4AF37] px-7 py-3 font-semibold text-black transition hover:bg-[#E6C766]"
               >
                 Shop Now
               </Link>
 
               <Link
-                href="/shop"
-                className="rounded-2xl border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white transition hover:border-[#D4AF37]/40 hover:bg-white/10"
+                href="/about"
+                className="rounded-full border border-white/15 bg-white/5 px-7 py-3 font-semibold text-white transition hover:border-[#D4AF37]/35 hover:bg-white/10"
               >
-                Explore Collection
+                About Brand
               </Link>
-            </div>
-
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-4">
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
-                <div className="text-xs uppercase tracking-[0.18em] text-gray-400">
-                  Store Style
-                </div>
-                <div className="mt-1 text-lg font-bold text-[#D4AF37]">
-                  Luxury
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
-                <div className="text-xs uppercase tracking-[0.18em] text-gray-400">
-                  Checkout
-                </div>
-                <div className="mt-1 text-lg font-bold text-white">Secure</div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
-                <div className="text-xs uppercase tracking-[0.18em] text-gray-400">
-                  Products
-                </div>
-                <div className="mt-1 text-lg font-bold text-white">
-                  {products.length}
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-              Featured Products
+      {/* SIGNATURE SHOWCASE */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mb-14 text-center">
+          <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D4AF37]">
+            Signature Showcase
+          </div>
+          <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+            Designed to feel powerful
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
+            Selected pieces that represent the direction of SafiPro with clean
+            visuals, strong symbolism and premium identity.
+          </p>
+        </div>
+
+        <div className="space-y-20">
+          {/* T-SHIRT */}
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0A0A0A]/70 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+              <img
+                src="/t-shirt.jpeg"
+                alt="Own Your Future T-Shirt"
+                className="h-[420px] w-full object-cover object-center sm:h-[520px]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </div>
-            <h2 className="mt-2 text-3xl font-bold text-white">
-              Discover the SafiPro Collection
+
+            <div className="rounded-[32px] border border-white/10 bg-[#0A0A0A]/60 p-7 backdrop-blur-xl">
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
+                Featured Apparel
+              </div>
+
+              <h3 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+                Own Your Future T-Shirt
+              </h3>
+
+              <p className="mt-5 text-sm leading-8 text-gray-300 sm:text-base">
+                This piece is created for people who move with intention. The
+                “Own Your Future” design represents discipline, ambition and a
+                mindset that refuses to settle for average. Clean, confident and
+                bold, it is built to feel premium both in message and presence.
+              </p>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  Premium cotton feel
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  Strong eagle artwork
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  Leadership aesthetic
+                </div>
+              </div>
+
+              <div className="mt-7">
+                <Link
+                  href="/shop"
+                  className="inline-flex rounded-full bg-[#D4AF37] px-7 py-3 font-semibold text-black transition hover:bg-[#E6C766]"
+                >
+                  Explore Collection
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* MUG */}
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            <div className="order-2 rounded-[32px] border border-white/10 bg-[#0A0A0A]/60 p-7 backdrop-blur-xl lg:order-1">
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
+                Featured Drinkware
+              </div>
+
+              <h3 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+                CEO Vision Mug
+              </h3>
+
+              <p className="mt-5 text-sm leading-8 text-gray-300 sm:text-base">
+                Every day starts with mindset. This mug is made for builders,
+                thinkers and decision-makers who want a daily reminder of focus,
+                authority and clear vision. The eagle face and CEO mark turn a
+                simple product into a symbol of purpose.
+              </p>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  Premium ceramic build
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  Strong visual identity
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-200">
+                  CEO mindset energy
+                </div>
+              </div>
+
+              <div className="mt-7">
+                <Link
+                  href="/shop"
+                  className="inline-flex rounded-full border border-[#D4AF37] px-7 py-3 font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+                >
+                  View Products
+                </Link>
+              </div>
+            </div>
+
+            <div className="order-1 relative overflow-hidden rounded-[32px] border border-white/10 bg-[#0A0A0A]/70 shadow-[0_10px_40px_rgba(0,0,0,0.35)] lg:order-2">
+              <img
+                src="/gg.jpeg"
+                alt="CEO Vision Mug"
+                className="h-[420px] w-full object-cover object-center sm:h-[520px]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED PRODUCTS FROM DATABASE */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mb-10 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D4AF37]">
+              Live Products
+            </div>
+            <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
+              Featured Products
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-400">
-              Real products synced from your store are displayed here. Customers
-              can browse them directly from the homepage.
-            </p>
           </div>
 
           <Link
             href="/shop"
-            className="rounded-2xl border border-[#2b2b2b] bg-[#0A0A0A] px-5 py-3 font-semibold text-white transition hover:border-[#D4AF37]/40 hover:text-[#E6C766]"
+            className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-[#D4AF37]/35 hover:text-[#E6C766]"
           >
-            View All Products
+            View All
           </Link>
         </div>
 
-        {error ? (
-          <div className="mt-8 rounded-3xl border border-red-500/30 bg-red-500/10 p-6 text-red-300">
-            Failed to load homepage products: {error.message}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="mt-8 rounded-3xl border border-[#2b2b2b] bg-[#0A0A0A]/90 p-10 text-center">
-            <h3 className="text-2xl font-semibold text-white">No Products Yet</h3>
-            <p className="mt-3 text-sm leading-7 text-gray-400">
-              Once products are synced and published, they will appear here
-              automatically.
-            </p>
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          {products.map((product) => {
+            const image =
+              product.product_images?.find((i) => i.is_primary) ||
+              product.product_images?.[0]
 
-            <Link
-              href="/shop"
-              className="mt-6 inline-block rounded-2xl bg-[#D4AF37] px-5 py-3 font-semibold text-black transition hover:bg-[#E6C766]"
-            >
-              Go to Shop
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {products.map((product) => {
-              const primaryImage =
-                product.product_images?.find((img) => img.is_primary) ||
-                product.product_images?.[0]
+            const variant =
+              product.product_variants?.find((v) => v.is_available) ||
+              product.product_variants?.[0]
 
-              const firstVariant =
-                product.product_variants?.find((variant) => variant.is_available) ||
-                product.product_variants?.[0]
+            return (
+              <Link
+                key={product.id}
+                href={`/shop/${product.slug}`}
+                className="group overflow-hidden rounded-[30px] border border-[#2b2b2b] bg-[#0A0A0A]/90 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/40 hover:shadow-[0_0_30px_rgba(212,175,55,0.14)]"
+              >
+                <div className="relative aspect-square overflow-hidden bg-black">
+                  {image?.image_url ? (
+                    <img
+                      src={image.image_url}
+                      alt={product.title}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-gray-500">
+                      No image
+                    </div>
+                  )}
 
-              const price = firstVariant?.selling_price ?? null
-              const currency = firstVariant?.currency ?? "USD"
-              const isAvailable = Boolean(firstVariant?.is_available)
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </div>
 
-              return (
-                <Link
-                  key={product.id}
-                  href={`/shop/${product.slug}`}
-                  className="group overflow-hidden rounded-[28px] border border-[#2b2b2b] bg-[#0A0A0A]/90 shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1.5 hover:border-[#D4AF37]/40 hover:shadow-[0_0_30px_rgba(212,175,55,0.16)]"
-                >
-                  <div className="relative aspect-[4/4.4] overflow-hidden bg-gradient-to-b from-[#111111] to-black">
-                    {primaryImage?.image_url ? (
-                      <img
-                        src={primaryImage.image_url}
-                        alt={product.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-gray-500">
-                        No image available
-                      </div>
-                    )}
+                <div className="p-5">
+                  <h3 className="line-clamp-2 text-lg font-semibold text-white">
+                    {product.title}
+                  </h3>
 
-                    <div className="absolute left-4 top-4 flex items-center gap-2">
-                      <span className="rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#E6C766]">
-                        Premium
-                      </span>
-
-                      <span
-                        className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${
-                          isAvailable
-                            ? "border-green-500/30 bg-green-500/10 text-green-300"
-                            : "border-red-500/30 bg-red-500/10 text-red-300"
-                        }`}
-                      >
-                        {isAvailable ? "In Stock" : "Out of Stock"}
-                      </span>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="text-lg font-bold text-[#D4AF37]">
+                      {variant
+                        ? `${variant.selling_price} ${variant.currency}`
+                        : "—"}
                     </div>
 
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <span className="rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-3 py-1 text-xs font-medium text-[#E6C766]">
+                      Premium
+                    </span>
                   </div>
-
-                  <div className="p-5">
-                    <h3 className="line-clamp-2 text-lg font-semibold leading-7 text-white transition group-hover:text-[#F3D46A]">
-                      {product.title}
-                    </h3>
-
-                    {product.short_description ? (
-                      <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-400">
-                        {product.short_description}
-                      </p>
-                    ) : (
-                      <p className="mt-3 text-sm leading-6 text-gray-500">
-                        Premium product from the SafiPro collection.
-                      </p>
-                    )}
-
-                    <div className="mt-6 flex items-end justify-between gap-4">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                          Price
-                        </div>
-                        <div className="mt-1 text-xl font-bold text-[#D4AF37]">
-                          {formatPrice(price, currency)}
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl border border-[#2b2b2b] bg-black/30 px-4 py-2 text-sm font-medium text-white transition group-hover:border-[#D4AF37]/30 group-hover:text-[#E6C766]">
-                        View
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
       </section>
 
-      {/* BRAND BANNER */}
-      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-[32px] border border-[#2b2b2b] bg-[linear-gradient(135deg,#0a0a0a_0%,#161616_60%,#101010_100%)] p-8 shadow-[0_12px_40px_rgba(0,0,0,0.35)] sm:p-12">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-                Why SafiPro
-              </div>
-              <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
-                Built for premium presentation and serious brand identity
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
-                SafiPro is not just another storefront. It is designed to feel
-                elevated, polished, and memorable, with luxury styling, secure
-                checkout, and a product experience built to convert.
+      {/* WHY SAFIPRO */}
+      <section className="bg-[#0A0A0A]/75 py-20 text-center backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D4AF37]">
+            Why SafiPro
+          </div>
+
+          <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+            More than products
+          </h2>
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-3">
+            <div className="rounded-[28px] border border-[#2b2b2b] bg-black/40 p-6">
+              <h3 className="text-xl font-semibold text-white">
+                Premium Quality
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-gray-400">
+                High-end products designed to feel clean, strong and lasting.
               </p>
-
-              <div className="mt-8 flex flex-wrap gap-4">
-                <div className="rounded-2xl border border-[#2b2b2b] bg-black/30 px-5 py-4">
-                  <div className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                    Premium Design
-                  </div>
-                  <div className="mt-1 text-lg font-bold text-white">
-                    Black & Gold
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[#2b2b2b] bg-black/30 px-5 py-4">
-                  <div className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                    Payment
-                  </div>
-                  <div className="mt-1 text-lg font-bold text-white">
-                    Stripe & PayPal
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-[#2b2b2b] bg-black/30 px-5 py-4">
-                  <div className="text-xs uppercase tracking-[0.18em] text-gray-500">
-                    Fulfillment
-                  </div>
-                  <div className="mt-1 text-lg font-bold text-white">
-                    Printify Ready
-                  </div>
-                </div>
-              </div>
             </div>
 
-            <div className="grid gap-4">
-              <div className="rounded-3xl border border-[#2b2b2b] bg-black/30 p-6">
-                <h3 className="text-xl font-semibold text-[#D4AF37]">
-                  Premium Quality
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  Carefully selected products with strong presentation and clean
-                  product detail experience.
-                </p>
-              </div>
+            <div className="rounded-[28px] border border-[#2b2b2b] bg-black/40 p-6">
+              <h3 className="text-xl font-semibold text-white">
+                Strong Identity
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-gray-400">
+                Visuals and messaging built around leadership, focus and power.
+              </p>
+            </div>
 
-              <div className="rounded-3xl border border-[#2b2b2b] bg-black/30 p-6">
-                <h3 className="text-xl font-semibold text-[#D4AF37]">
-                  Secure Checkout
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  Modern payment flow with Stripe and PayPal integration for a
-                  trusted customer experience.
-                </p>
-              </div>
+            <div className="rounded-[28px] border border-[#2b2b2b] bg-black/40 p-6">
+              <h3 className="text-xl font-semibold text-white">
+                Secure Checkout
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-gray-400">
+                Smooth and secure buying experience with trusted payment flow.
+              </p>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* CTA */}
+      <section className="px-4 py-24 text-center sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-bold text-[#D4AF37] sm:text-4xl">
+          Ready to elevate your style?
+        </h2>
+
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-400 sm:text-base">
+          Step into a collection designed with identity, confidence and premium
+          energy.
+        </p>
+
+        <Link
+          href="/shop"
+          className="mt-8 inline-block rounded-full border border-[#D4AF37] px-8 py-4 font-semibold text-[#D4AF37] transition hover:bg-[#D4AF37] hover:text-black"
+        >
+          Explore Full Collection
+        </Link>
       </section>
     </main>
   )

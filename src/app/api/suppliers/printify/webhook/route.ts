@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server"
 
-export async function GET() {
+export async function POST(req: Request) {
   try {
+    const body = await req.json()
+    console.log("Printify webhook received:", body)
+
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL
 
     if (!baseUrl) {
@@ -11,7 +14,8 @@ export async function GET() {
       )
     }
 
-    const res = await fetch(`${baseUrl}/api/suppliers/printify/sync`, {
+    // فوراً sync را اجرا می‌کنیم
+    await fetch(`${baseUrl}/api/suppliers/printify/sync`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,17 +23,12 @@ export async function GET() {
       cache: "no-store",
     })
 
-    const data = await res.json()
-
-    return NextResponse.json({
-      success: true,
-      data,
-    })
+    return NextResponse.json({ success: true, received: true })
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Cron sync failed",
+        error: error instanceof Error ? error.message : "Webhook failed",
       },
       { status: 500 }
     )

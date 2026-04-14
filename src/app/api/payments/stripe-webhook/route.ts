@@ -47,43 +47,95 @@ export async function POST(req: Request) {
       const customerEmail = session.customer_email || ""
       const orderNumber = session.metadata?.order_number || "N/A"
 
-      if (orderId) {
-        // 🔥 گرفتن سفارش کامل
-        const { data: order } = await supabase
-          .from("orders")
-          .select("*")
-          .eq("id", orderId)
-          .single()
+      if (!orderId) {
+        return NextResponse.json({ received: true })
+      }
 
-        // 🔥 update status
-        await supabase
-          .from("orders")
-          .update({ payment_status: "paid" })
-          .eq("id", orderId)
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .select(`
+          *,
+          order_items (*)
+        `)
+        .eq("id", orderId)
+        .single()
 
-        // 🔥 ارسال به Printify
+      if (orderError || !order) {
+        throw new Error(orderError?.message || "Order not found after payment")
+      }
+
+      await supabase
+        .from("orders")
+        .update({
+          payment_status: "paid",
+        })
+        .eq("id", orderId)
+
+      let printifyError = ""
+      let alreadySubmitted = Boolean(order.supplier_order_id)
+
+      if (!alreadySubmitted) {
         try {
-          await sendToPrintify(order)
-        } catch (e) {
-          console.error("Printify failed:", e)
-        }
+          const printifyResult = await sendToPrintify(order)
 
-        // 🔥 ایمیل
+          await supabase
+            .from("orders")
+            .update({
+              fulfillment_status: "submitted",
+              supplier_order_id: printifyResult?.id
+                ? String(printifyResult.id)
+                : null,
+            })
+            .eq("id", orderId)
+        } catch (error) {
+          printifyError =
+            error instanceof Error ? error.message : "Printify submission failed"
+
+          await supabase
+            .from("orders")
+            .update({
+              fulfillment_status: "failed",
+            })
+            .eq("id", orderId)
+        }
+      }
+
+      try {
         await sendOrderEmail({
           orderNumber,
           customerEmail,
         })
+      } catch (error) {
+        console.error("Email failed:", error)
+      }
 
-        // 🔥 تلگرام
-        await sendTelegramMessage(`
-🛒 <b>New Order Paid</b>
+      try {
+        await sendTelegramMessage(
+          `
+🛒 <b>New Paid Order</b>
 
 Order: ${orderNumber}
 Email: ${customerEmail}
+Payment: paid
+Fulfillment: ${
+            alreadySubmitted
+              ? "already submitted"
+              : printifyError
+              ? "failed"
+              : "submitted"
+          }
 
-💰 Status: PAID
-📦 Sent to Printify
-`)
+${
+  alreadySubmitted
+    ? "ℹ️ Order was already sent to Printify"
+    : printifyError
+    ? `❌ Printify Error: ${printifyError}`
+    : "✅ Sent to Printify"
+}
+          `.trim()
+        )
+      } catch (error) {
+        console.error("Telegram failed:", error)
       }
     }
 
