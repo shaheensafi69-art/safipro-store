@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useCart } from "@/components/cart/cart-provider"
-import { PayPalButtons } from "@paypal/react-paypal-js"
 
 const US_STATES = [
   "Alabama",
@@ -59,10 +58,9 @@ const US_STATES = [
 ]
 
 export default function CheckoutPage() {
-  const { items, subtotal, itemCount, clearCart } = useCart()
+  const { items, subtotal, itemCount } = useCart()
 
   const [loading, setLoading] = useState(false)
-  const [paypalLoading, setPaypalLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
@@ -80,10 +78,9 @@ export default function CheckoutPage() {
   })
 
   const shipping = useMemo(() => {
-    if (items.length === 0) return 0
-    if (subtotal >= 100) return 0
-    return 9.99
-  }, [items.length, subtotal])
+  if (items.length === 0) return 0
+  return 2.5
+}, [items.length])
 
   const total = useMemo(() => subtotal + shipping, [subtotal, shipping])
 
@@ -227,7 +224,7 @@ export default function CheckoutPage() {
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-300 sm:text-base">
-          Enter your shipping details and continue with your preferred payment method.
+          Enter your shipping details and continue to secure card payment.
         </p>
       </div>
 
@@ -463,107 +460,11 @@ export default function CheckoutPage() {
           <button
             type="button"
             onClick={handleStripe}
-            disabled={loading || paypalLoading}
+            disabled={loading}
             className="mt-6 w-full rounded-2xl bg-[#D4AF37] py-3 font-bold text-black transition hover:bg-[#E6C766] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? "Processing..." : "Pay with Card"}
           </button>
-
-          <div className="mt-4">
-            <PayPalButtons
-              style={{ layout: "vertical", color: "gold", shape: "rect", label: "paypal" }}
-              disabled={loading || paypalLoading}
-              createOrder={async () => {
-                setError("")
-                setSuccess("")
-
-                const err = validate()
-                if (err) {
-                  setError(err)
-                  throw new Error(err)
-                }
-
-                try {
-                  setPaypalLoading(true)
-                  setSuccess("Creating PayPal order...")
-
-                  await createOrder()
-
-                  const res = await fetch("/api/paypal/create-order", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      items,
-                      shippingCost: shipping,
-                      name: `${form.firstName} ${form.lastName}`.trim(),
-                      email: form.email,
-                    }),
-                  })
-
-                  const data = await res.json()
-
-                  if (!res.ok || !data.orderID) {
-                    throw new Error(data.error || "PayPal order creation failed")
-                  }
-
-                  return data.orderID
-                } catch (e) {
-                  const message =
-                    e instanceof Error ? e.message : "PayPal checkout failed"
-                  setError(message)
-                  setSuccess("")
-                  throw e
-                } finally {
-                  setPaypalLoading(false)
-                }
-              }}
-              onApprove={async (data) => {
-                try {
-                  setPaypalLoading(true)
-                  setError("")
-                  setSuccess("Capturing PayPal payment...")
-
-                  const res = await fetch("/api/paypal/capture-order", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ orderID: data.orderID }),
-                  })
-
-                  const result = await res.json()
-
-                  if (!res.ok || !result.success) {
-                    throw new Error(result.error || "PayPal capture failed")
-                  }
-
-                  clearCart()
-                  window.location.href = "/order-success?paypal=1"
-                } catch (e) {
-                  setError(
-                    e instanceof Error ? e.message : "PayPal payment failed"
-                  )
-                  setSuccess("")
-                } finally {
-                  setPaypalLoading(false)
-                }
-              }}
-              onError={() => {
-                setError("PayPal error occurred")
-                setSuccess("")
-                setPaypalLoading(false)
-              }}
-            />
-          </div>
-
-          <Link
-            href="/cart"
-            className="mt-4 block text-center text-gray-400 transition hover:text-white"
-          >
-            Back to Cart
-          </Link>
         </div>
       </div>
 
