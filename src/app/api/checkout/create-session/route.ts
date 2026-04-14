@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/payments/stripe"
+import { getStripe } from "@/lib/payments/stripe"
 
 type CheckoutItem = {
   title: string
@@ -12,6 +12,7 @@ type CheckoutItem = {
 
 export async function POST(req: Request) {
   try {
+    const stripe = getStripe()
     const body = await req.json()
 
     const {

@@ -1,7 +1,7 @@
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import { stripe } from "@/lib/payments/stripe"
+import { getStripe } from "@/lib/payments/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 export async function POST(req: Request) {
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event
 
   try {
+    const stripe = getStripe()
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (error) {
     return NextResponse.json(
