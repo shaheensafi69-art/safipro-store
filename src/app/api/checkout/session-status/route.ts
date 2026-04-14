@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/payments/stripe"
+import { getStripe } from "@/lib/payments/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 
 export async function GET(req: Request) {
@@ -14,6 +14,7 @@ export async function GET(req: Request) {
       )
     }
 
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     const orderId =
